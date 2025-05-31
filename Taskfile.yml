@@ -1,0 +1,27 @@
+version: "3"
+
+dotenv:
+  - ".env"
+
+tasks:
+  install-tools:
+    cmds:
+      - go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+      - go install github.com/wolfmagnate/llm-sqlc@latest
+
+
+
+  generate-db:
+    desc: "pkg/infra ディレクトリで sqlc generate を実行します。"
+    dir: pkg/infra
+    cmds:
+      - sqlc generate
+    silent: true
+
+  generate-infra:
+    desc: |
+      例: task generate-infra -- pkg/infra/user.go
+    cmds:
+      - llm-sqlc sql {{.CLI_ARGS}}
+      - task: generate-db 
+      - llm-sqlc program {{.CLI_ARGS}}
